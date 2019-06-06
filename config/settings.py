@@ -28,10 +28,15 @@ env = environ.Env(
 
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
+DATABASE_URL = env('DATABASE_URL')
 HEROKU_API_KEY = env('HEROKU_API_KEY')
 HEROKU_SITE = env('HEROKU_SITE')
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+GDS_SITE = env('GDS_SITE')
+GDS_LOGIN_SITE = env('GDS_LOGIN_SITE')
+GDS_USER = env('GDS_USER')
+GDS_USER_PASS = env('GDS_USER_PASS')
 GECKO_TOKEN = env('GECKO_TOKEN')
 
 # Quick-start development settings - unsuitable for production
@@ -52,7 +57,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'aws',
-    'heroku'
+    'heroku',
+    'gds',
 ]
 
 MIDDLEWARE = [
@@ -88,6 +94,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

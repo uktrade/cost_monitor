@@ -4,6 +4,7 @@ from django.conf import settings
 from core.helper.date import Ranges
 from heroku.helper.api import client as heroku_client
 from aws.helper.api import client as boto_aws_client
+from gds.helper.web import client as gds_client
 
 
 class Forecast:
@@ -44,6 +45,23 @@ class Forecast:
 
         return self.__forecast(this_month=this_month_bill,
                                previous_month=previous_month_bill)
+
+    def gds(self):
+        this_month_start_date = (Ranges().current_month())['start_date']
+        previous_month_start_date = (Ranges().previous_month())['start_date']
+
+        gc = gds_client(site=settings.GDS_SITE, login_site=settings.GDS_LOGIN_SITE,
+                        login_name=settings.GDS_USER, password=settings.GDS_USER_PASS)
+
+        gc.login()
+
+        this_month_bill = gc.get_bill(
+            this_month_start_date.strftime(self.dateformat))
+
+        previous_month_bill = gc.get_bill(
+            previous_month_start_date.strftime(self.dateformat))
+
+        return self.__forecast(this_month_bill, previous_month_bill)
 
     def __forecast(self, this_month=None, previous_month=None):
         forecast_data = list()
