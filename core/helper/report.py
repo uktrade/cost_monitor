@@ -54,6 +54,7 @@ class Forecast:
                         login_name=settings.GDS_USER, password=settings.GDS_USER_PASS)
 
         gc.login()
+        gc.get_orgs()
 
         this_month_bill = gc.get_bill(
             this_month_start_date.strftime(self.dateformat))
@@ -98,8 +99,8 @@ class Forecast:
                         else:
                             percent_diff = 0.0
 
-            forecast_data.append({'name': account, 'forecast': float(
-                format(forecast, '.2f')), 'percent_diff': float(format(percent_diff, '.2f'))})
+                forecast_data.append({'name': account, 'forecast': float(
+                    format(forecast, '.2f')), 'percent_diff': float(format(percent_diff, '.2f'))})
 
         forecast_data = sorted(
             forecast_data, key=itemgetter('forecast'), reverse=True)

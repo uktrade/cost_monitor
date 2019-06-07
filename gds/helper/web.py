@@ -50,7 +50,7 @@ class client:
         except Exception as e:
             raise e
 
-    def __get_orgs(self):
+    def get_orgs(self):
         response = self.webClient.get(self.login_success['url'])
 
         for link in (self.__soup(response.content)).find_all('a'):
@@ -58,27 +58,25 @@ class client:
                 self.org_data.append({'name': (link.get_text()).strip(
                 ), 'link': 'https://' + self.login_success['host'] + link.get('href')})
 
-    def __get_org_spaces(self):
+    def __get_org_spaces(self, org_link, start_date):
+        spaces = list()
+        response = self.webClient.get(
+            org_link + '/statements/' + start_date)
 
-        for org in self.org_data:
-            response = self.webClient.get(org['link'])
-            spaces = list()
-            for link in (self.__soup(response.content)).find_all('a'):
-                if link.get('id'):
-                    id = (link.get('id')).split('space-')[1]
-                    for h3 in link.find_all('h3'):
-                        regex = re.compile('[^a-zA-Z:\-0-9]')
-                        text = regex.sub('', h3.get_text())
-                        spaces.append(
-                            {'name': text.split(':')[1], 'id': id, 'bill': 0.0})
-                        org.update({'spaces': spaces})
+        for option in self.__soup(response.content).find('select', id='space').find_all('option'):
+            id = option.get('value').strip()
+            name = option.get_text().strip()
+
+            spaces.append(
+                {'name': name, 'id': id})
+
+        return spaces
 
     def get_bill(self, start_date):
         billing_data = dict()
-        self.__get_orgs()
-        self.__get_org_spaces()
+
         for org in self.org_data:
-            for space in org['spaces']:
+            for space in self.__get_org_spaces(org['link'], start_date):
                 billing_link = org['link'] + '/statements/' + start_date + '?_csrf=' + \
                     self.csrftoken + '&space=' + \
                     space['id'] + '&service=none&sort=name&order=asc'
