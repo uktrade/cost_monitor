@@ -21,7 +21,8 @@ class Command(BaseCommand):
                               forecast.heroku()))
             self.stdout.write(self.style.SUCCESS("HEROKU: OK"))
             # Update GDS Board
-            payload = reporter.leaderboard_format(forecast.gds())
+            payload = reporter.leaderboard_format(
+                forecast.gds_paas_bill_forecat())
             reporter.push(widget_uuid="112259-1edb3d60-6ae1-0137-d660-022d23d9b2a0",
                           payload=payload)
             self.stdout.write(self.style.SUCCESS("GDS: OK"))

@@ -10,20 +10,25 @@ class client:
         self.login_name = login_name
         self.password = password
         self.access_token = None
+        self.userAgent = {'User-Agent': 'DIT-Billing-API-Client'}
 
-    def __getRequest(self, uri=None, headers=dict(), query=dict()):
-        headers['User-Agent'] = 'DIT Billing API Client'
+    def __getRequest(self, uri=None, headers=None, query=None):
+        headers = headers or {}
+        query = query or {}
+        headers.update(self.userAgent)
         return requests.get(uri, headers=headers, params=query)
 
-    def __postRequest(self, uri=None, headers=dict(), data=dict()):
-        headers['User-Agent'] = 'DIT Billing API Client'
+    def __postRequest(self, uri=None, headers=None, data=None):
+        headers = headers or {}
+        data = data or {}
+        headers.update(self.userAgent)
         return requests.post(uri, headers=headers, data=data)
 
     def getLoginLink(self):
-        apiInfo = self.__getRequest("{}/info".format(self.gds_api_url))
+        apiInfo = self.__getRequest(f"{self.gds_api_url}/info")
         return apiInfo.json()['authorization_endpoint'] + '/oauth/token'
 
-    def setAccessToekn(self):
+    def setAccessToken(self):
         loginLink = self.getLoginLink()
 
         auth_headers = {
@@ -40,7 +45,7 @@ class client:
         self.access_token = response.json()['access_token']
 
     def getOrgs(self):
-        organizations = list()
+        organizations = []
         headers = {
             'Accept': 'application/json',
             'Authorization': "Bearer {}".format(self.access_token)
@@ -52,14 +57,15 @@ class client:
             for org in orgInfo['resources']:
                 organizations.append(
                     {'name': org['name'], 'guid': org['guid']})
-            if 'next' not in orgInfo['pagination'].keys():
+
+            if orgInfo['pagination']['next'] is None:
                 break
-            orgsLink = ['pagination']['next']
+            orgsLink = orgInfo['pagination']['next']
 
         return organizations
 
     def get_bill(self, start_date=None, end_date=None):
-        billing_data = dict()
+        billing_data = {}
         headers = {
             'Accept': 'application/json',
             'Authorization': "Bearer {}".format(self.access_token)
@@ -74,10 +80,10 @@ class client:
             query['org_guid'] = org['guid']
             billingInfo = self.__getRequest(
                 self.gds_billing_url, headers=headers, query=query).json()
-            space_bill = dict()
+            space_bill = {}
             for bill in billingInfo:
                 space_name = bill['space_name']
-                if space_name not in space_bill.keys():
+                if space_name not in space_bill:
                     space_bill[space_name] = 0
                 else:
                     space_bill[space_name] += float(bill['price']['inc_vat'])

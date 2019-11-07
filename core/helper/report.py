@@ -46,7 +46,7 @@ class Forecast:
         return self.__forecast(this_month=this_month_bill,
                                previous_month=previous_month_bill)
 
-    def gds(self):
+    def gds_paas_bill_forecat(self):
         this_month_dates = Ranges().current_month()
         previous_month_dates = Ranges().previous_month()
 
@@ -55,7 +55,7 @@ class Forecast:
                             login_name=settings.GDS_USER,
                             password=settings.GDS_USER_PASS)
 
-        gc.setAccessToekn()
+        gc.setAccessToken()
         this_month_bill = gc.get_bill(start_date=this_month_dates['start_date'].strftime(self.dateformat),
                                       end_date=this_month_dates['end_date'].strftime(
                                           self.dateformat)
