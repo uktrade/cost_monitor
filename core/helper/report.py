@@ -4,7 +4,7 @@ from django.conf import settings
 from core.helper.date import Ranges
 from heroku.helper.api import client as heroku_client
 from aws.helper.api import client as boto_aws_client
-from gds.helper.web import client as gds_client
+from gds.helper.api import client as gds_api_client
 
 
 class Forecast:
@@ -47,20 +47,23 @@ class Forecast:
                                previous_month=previous_month_bill)
 
     def gds(self):
-        this_month_start_date = (Ranges().current_month())['start_date']
-        previous_month_start_date = (Ranges().previous_month())['start_date']
+        this_month_dates = Ranges().current_month()
+        previous_month_dates = Ranges().previous_month()
 
-        gc = gds_client(site=settings.GDS_SITE, login_site=settings.GDS_LOGIN_SITE,
-                        login_name=settings.GDS_USER, password=settings.GDS_USER_PASS)
+        gc = gds_api_client(gds_api_url=settings.GDS_PAAS_API_URL,
+                            gds_billing_url=settings.GDS_BILLING_API_URL,
+                            login_name=settings.GDS_USER,
+                            password=settings.GDS_USER_PASS)
 
-        gc.login()
-        gc.get_orgs()
-
-        this_month_bill = gc.get_bill(
-            this_month_start_date.strftime(self.dateformat))
-
-        previous_month_bill = gc.get_bill(
-            previous_month_start_date.strftime(self.dateformat))
+        gc.setAccessToekn()
+        this_month_bill = gc.get_bill(start_date=this_month_dates['start_date'].strftime(self.dateformat),
+                                      end_date=this_month_dates['end_date'].strftime(
+                                          self.dateformat)
+                                      )
+        previous_month_bill = gc.get_bill(start_date=previous_month_dates['start_date'].strftime(self.dateformat),
+                                          end_date=previous_month_dates['end_date'].strftime(
+            self.dateformat)
+        )
 
         return self.__forecast(this_month_bill, previous_month_bill)
 
