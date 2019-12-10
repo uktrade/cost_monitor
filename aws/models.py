@@ -10,21 +10,18 @@ class AwsReportDates(models.Model):
 
     class Meta:
         verbose_name_plural = "Aws Report Dates"
-
-
 class AwsAccounts(models.Model):
-    id = models.IntegerField(primary_key=True)
+    pk_id = models.AutoField(primary_key=True)
+    report_date = models.ForeignKey('AwsReportDates',on_delete=models.CASCADE)
+    id = models.IntegerField()
     name = models.CharField(max_length=100)
-
+   
     class Meta:
         verbose_name_plural = "Aws Accounts"
-
-
-class AccountsCost(models.Model):
-    id = models.AutoField(primary_key=True)
-    month = models.ForeignKey('AwsReportDates', on_delete=models.CASCADE)
-    account_id = models.ForeignKey('AwsAccounts', on_delete=models.CASCADE)
-    amount = models.FloatField()
+class AwsAccountCost(models.Model):
+    pk_id = models.AutoField(primary_key=True)
+    account = models.ForeignKey('AwsAccounts',on_delete=models.CASCADE)
+    amount = models.FloatField(null=True)
 
     class Meta:
-        verbose_name_plural = "Aws Cost"
+        verbose_name_plural = "Aws Account Cost"

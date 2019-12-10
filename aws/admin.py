@@ -1,5 +1,5 @@
 from django.contrib import admin
-from aws.models import AwsReportDates, AwsAccounts, AccountsCost
+from aws.models import AwsReportDates,AwsAccounts,AwsAccountCost
 # Register your models here.
 
 
@@ -7,12 +7,9 @@ from aws.models import AwsReportDates, AwsAccounts, AccountsCost
 class AwsReportDatesAdmin(admin.ModelAdmin):
     list_display = ('month', 'start_date', 'end_date')
 
-
 @admin.register(AwsAccounts)
 class AwsAccountsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-
-
-@admin.register(AccountsCost)
-class AccountsCostAdmin(admin.ModelAdmin):
-    list_display = ('month', 'account_id', 'amount')
+    list_display = ('report_date','id','name')
+@admin.register(AwsAccountCost)
+class AwsAccountCostAdmin(admin.ModelAdmin):
+    list_display = ('account','amount')

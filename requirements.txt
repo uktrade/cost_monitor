@@ -1,5 +1,6 @@
-django=2.2.6
+django==2.2.6
 django-environ==0.4.5
+dj-database-url==0.4.2
 awscli==1.16.171
 boto3==1.9.160
 gunicorn==19.9.0

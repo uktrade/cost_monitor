@@ -16,9 +16,16 @@ class Processor:
 
         dates = self.aws_record_mananger.getAwsReportDates()
 
-        for month, start_date, end_date in dates:
+        for date in dates:
+            start_date = date.start_date.strftime(self.dateformat)
+            end_date = date.end_date.strftime(self.dateformat)
             linked_accounts = self.aws_cleint.aws_linked_accounts(
-                start_date=start_date.strftime(self.dateformat), end_date=end_date.strftime(self.dateformat))
+                start_date=start_date, end_date=end_date)
 
-            self.aws_record_mananger.upDateLinkedAcounts(
-                linked_accounts=linked_accounts)
+
+            self.aws_record_mananger.updateLinkedAcounts(date=date,linked_accounts=linked_accounts)
+            
+
+            monthly_bills = self.aws_cleint.aws_account_bill(start_date=start_date,end_date=end_date)
+
+            self.aws_record_mananger.updateCost(date=date,bills=monthly_bills)

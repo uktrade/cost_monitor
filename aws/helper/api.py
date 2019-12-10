@@ -22,19 +22,16 @@ class Client:
 
         return linked_accounts
 
-    def aws_account_bill(self, start_date, end_date):
-        billing_response = None
-        linked_accounts_map = self.__get_linked_accounts(
-            start_date, end_date)
-        billing_data = dict()
+    def aws_account_bill(self,start_date, end_date):
+        billing_response = {}
+        billing_data = []
 
         billing_response = self.client.get_cost_and_usage(TimePeriod={'Start': start_date, 'End': end_date}, Granularity='MONTHLY', Metrics=[
             'UnblendedCost'], GroupBy=[{'Type': 'DIMENSION', 'Key': 'LINKED_ACCOUNT'}])['ResultsByTime'][0]['Groups']
 
         for bill in billing_response:
-            id = bill['Keys'][0]
-            name = linked_accounts_map[id]
-            amount = bill['Metrics']['UnblendedCost']['Amount']
-            billing_data[name] = float(amount)
+            account_id = bill['Keys'][0]
+            amount = float(bill['Metrics']['UnblendedCost']['Amount'])
+            billing_data.append(tuple([account_id,amount]))
 
         return billing_data
