@@ -13,37 +13,26 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='AwsReportDates',
+            name='HerokuReportDate',
             fields=[
                 ('month', models.IntegerField(primary_key=True, serialize=False)),
                 ('start_date', models.DateField()),
-                ('end_date', models.DateField()),
             ],
-            options={
-                'verbose_name_plural': 'Aws Report Dates',
-            },
         ),
         migrations.CreateModel(
-            name='AwsAccounts',
+            name='HerokuTeam',
             fields=[
                 ('pk_id', models.AutoField(primary_key=True, serialize=False)),
-                ('id', models.IntegerField()),
                 ('name', models.CharField(max_length=100)),
-                ('report_date', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aws.AwsReportDates')),
             ],
-            options={
-                'verbose_name_plural': 'Aws Accounts',
-            },
         ),
         migrations.CreateModel(
-            name='AwsAccountCost',
+            name='HerokuCost',
             fields=[
                 ('pk_id', models.AutoField(primary_key=True, serialize=False)),
-                ('amount', models.FloatField(null=True)),
-                ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='aws.AwsAccounts')),
+                ('amount', models.IntegerField()),
+                ('report_date', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='heroku.HerokuReportDate')),
+                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='heroku.HerokuTeam')),
             ],
-            options={
-                'verbose_name_plural': 'Aws Account Cost',
-            },
         ),
     ]

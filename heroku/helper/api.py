@@ -1,7 +1,7 @@
 import requests
 
 
-class client(object):
+class Client(object):
 
     def __init__(self, heroku_api_key=None, heroku_site=None):
         self.heroku_api_key = heroku_api_key
@@ -17,7 +17,7 @@ class client(object):
         response = self.webclient.get(url)
         return response.json()
 
-    def __get_teams(self):
+    def getTeams(self):
         teams = list()
         team_data = self.__fetch(end_point='teams')
 
@@ -26,15 +26,15 @@ class client(object):
 
         return teams
 
-    def get_bill(self, start_date):
-        billing_data = dict()
-        for team in self.__get_teams():
+    def getBills(self,teams,start_date):
+        billing_data = []
+        for team in teams:
             invoice_list = self.__fetch("teams/%s/invoices" % team)
             for invoice in invoice_list:
                 if invoice['period_start'] == start_date:
                     amount = invoice['total'] / 100
                 else:
                     amount = 0.0
-            billing_data[team] = float(amount)
+            billing_data.append(tuple([team,float(amount)]))
 
         return billing_data

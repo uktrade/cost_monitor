@@ -1,14 +1,14 @@
 
 from aws.helper.db import AwsRecordManager
 from aws.helper.api import Client
-
+from django.conf import settings
 
 class Processor:
 
     def __init__(self):
 
         self.aws_record_mananger = AwsRecordManager()
-        self.aws_cleint = Client()
+        self.aws_cleint = Client(aws_access_key_id=settings.AWS_ACCESS_KEY_ID,aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
         self.dateformat = '%Y-%m-%d'
 
     def run(self):
