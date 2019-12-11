@@ -1,4 +1,4 @@
-from core.helper.date import Ranges
+from forecast.helper.date import Ranges
 from gds.models import GDSReportDate, GDSOrganization, GDSOrganizationsSpace, GDSCost
 
 
@@ -30,7 +30,7 @@ class GDSRecordManager:
         return self.getSpaces().filter(organization_id=orgnization_obj, id=space_id)
 
     def updateGDSDates(self):
-        dates = set(Ranges().past_6_months(aws=True))
+        dates = set(Ranges().past_6_months(aws=False))
         dates_in_db = self.getGDSReportDates()
         update_dates = dates.difference(dates_in_db)
 
