@@ -74,14 +74,6 @@ class GDSRecordManager:
             GDSOrganizationsSpace.objects.create(
                 organization_id=organization, id=space_id, name=space_name)
 
-    # def updateLinkedAcounts(self,date, linked_accounts):
-    #     for id, name in linked_accounts:
-    #         AwsAccounts.objects.update_or_create(report_date=date,id=id,name=name)
-
-    # def updateCost(self,date,bills):
-
-    #     linked_accounts = self.getLinkedAccountsbyDate(date=date)
-
-    #     for account_id,amount in bills:
-    #         linked_account = linked_accounts.filter(id=account_id)[0]
-    #         AwsAccountCost.objects.update_or_create(account=linked_account,amount=amount)
+    def updateCost(self, date, organization, space, amount):
+        GDSCost.objects.update_or_create(
+            report_date=date, organization_id=organization, space_id=space, amount=amount)

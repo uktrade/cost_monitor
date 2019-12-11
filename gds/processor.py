@@ -39,20 +39,14 @@ class Processor:
                     # appending space id and name
                     spaces.append(tuple([space[0], space[1]]))
 
+                # Update Organization Spaces
                 self.gds_record_mananger.updateOrganizationSpaces(
                     organization=organization, spaces=spaces)
 
-            # for date in dates:
-            #     start_date = date.start_date.strftime(self.dateformat)
-            #     end_date = date.end_date.strftime(self.dateformat)
+                # Update Space Cost
+                for space_id, space_name, amount in organization_bill:
+                    space = self.gds_record_mananger.getSpaceById(
+                        space_id=space_id)[0]
 
-            # linked_accounts = self.aws_cleint.aws_linked_accounts(
-            #     start_date=start_date, end_date=end_date)
-
-            # self.aws_record_mananger.updateLinkedAcounts(
-            #     date=date, linked_accounts=linked_accounts)
-
-            # monthly_bills = self.aws_cleint.aws_account_bill(
-            #     start_date=start_date, end_date=end_date)
-
-            # self.aws_record_mananger.updateCost(date=date, bills=monthly_bills)
+                    self.gds_record_mananger.updateCost(
+                        date=date, organization=organization, space=space, amount=amount)
