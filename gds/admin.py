@@ -1,12 +1,7 @@
 from django.contrib import admin
-from gds.models import GDSReportDate, GDSOrganization, GDSOrganizationsSpace, GDSCost
+from gds.models import GDSOrganization, GDSOrganizationsSpace, GDSCost
 
 # Register your models here.
-@admin.register(GDSReportDate)
-class GDSReportDateAdmin(admin.ModelAdmin):
-    list_display = ('month', 'start_date', 'end_date')
-
-
 @admin.register(GDSOrganization)
 class GDSOrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')

@@ -1,11 +1,7 @@
-from forecast.helper.date import Ranges
-from gds.models import GDSReportDate, GDSOrganization, GDSOrganizationsSpace, GDSCost
+from gds.models import GDSOrganization, GDSOrganizationsSpace, GDSCost
 
 
 class GDSRecordManager:
-
-    def getGDSReportDates(self):
-        return GDSReportDate.objects.order_by('-month')
 
     def getOgranizations(self):
         return GDSOrganization.objects.all()
@@ -29,19 +25,6 @@ class GDSRecordManager:
             organization_id=organization_id)[0]
         return self.getSpaces().filter(organization_id=orgnization_obj, id=space_id)
 
-    def updateGDSDates(self):
-        dates = set(Ranges().past_6_months(aws=False))
-        dates_in_db = self.getGDSReportDates()
-        update_dates = dates.difference(dates_in_db)
-
-        if dates_in_db:
-            for month, start_date, end_date in update_dates:
-                GDSReportDate.objects.filter(month=month).update(
-                    start_date=start_date, end_date=end_date)
-        else:
-            for month, start_date, end_date in update_dates:
-                GDSReportDate.objects.create(
-                    month=month, start_date=start_date, end_date=end_date)
 
     def updateOrganizations(self, organizations):
         organizations_in_db = set(self.getOgranizations().values_list())
