@@ -6,6 +6,9 @@ from aws.collector import Collector as awsCollector
 from heroku.collector import Collector as herokuCollector
 from gds.collector import Collector as GDSCollector
 
+
+from aws.forecast import Forecast as awsForecast
+
 class Processor:
 
     def __init__(self):
@@ -35,7 +38,7 @@ class Processor:
 
 
     def __awsForecast(self):
-        pass
+        awsForecast()
     
     def runCollectors(self):
         self.__awsCollector()

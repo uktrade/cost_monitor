@@ -1,4 +1,5 @@
-from aws.models import AwsAccount, AwsAccountCost
+from aws.models import AwsAccount, AwsAccountCost,AwsForecast
+from report.models import ReportDate
 
 class AwsRecordManager:
     
@@ -7,6 +8,10 @@ class AwsRecordManager:
 
     def getLinkedAccountbyID(self,id):
         return self.getLinkedAccounts().filter(id=id)
+
+    def getCostByMonth(self,month):
+        report_date = ReportDate.objects.filter(month=month)[0]
+        return AwsAccountCost.objects.filter(report_date=report_date).all()
 
     def updateLinkedAcounts(self,linked_accounts):
 
@@ -27,3 +32,8 @@ class AwsRecordManager:
         for account_id, amount in bills:
             linked_account =  self.getLinkedAccountbyID(id=account_id)[0]
             AwsAccountCost.objects.update_or_create(report_date=date,account=linked_account, amount=amount)
+
+    def updateForecast(self,forecastData):
+        for forecast in forecastData:
+            account = self.getLinkedAccountbyID(forecast['id'])[0]
+            AwsForecast.objects.update_or_create(account=account,amount=forecast['amount'],difference=forecast['difference'])
