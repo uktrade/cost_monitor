@@ -26,6 +26,7 @@ class Forecast:
         existingAccounts = currentMonthAccounts.intersection(previousMonthAccounts)
 
 
+        #Process account which are in both previous and current month
         for account in existingAccounts:
             percent_diff = None
             forecast = None
@@ -34,11 +35,15 @@ class Forecast:
             accountPreviousBill = previousMonthsBill[account]
 
             accountForecast = (accountCurrentBill / day) * number_of_days_this_month
-                    
-            accountPercentDiff = (accountForecast - accountPreviousBill) / accountPreviousBill
+            
+            accountPercentDiff = 0.0
+
+            if accountPreviousBill != 0:
+                accountPercentDiff = (accountForecast - accountPreviousBill) / accountPreviousBill
 
             forecastData.append({'id':account,'amount':accountForecast,'difference':accountPercentDiff})
 
+        #process newly added accounts
         for account in newAddedAccounts:
             accountForecast = (currentMonthBill[account] / day) * number_of_days_this_month
             accountPercentDiff = 0.00

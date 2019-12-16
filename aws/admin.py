@@ -11,4 +11,4 @@ class AwsAccountCostAdmin(admin.ModelAdmin):
 
 @admin.register(AwsForecast)
 class AwsForecastAdmin(admin.ModelAdmin):
-    list_display = ('account','amount','difference')
+    list_display = ('cost_id','amount','difference')

@@ -29,12 +29,12 @@ class Client(object):
     def getBills(self,teams,start_date):
         billing_data = []
         for team in teams:
-            invoice_list = self.__fetch("teams/%s/invoices" % team)
+            invoice_list = self.__fetch("teams/%s/invoices" % team.name)
             for invoice in invoice_list:
                 if invoice['period_start'] == start_date:
                     amount = invoice['total'] / 100
                 else:
                     amount = 0.0
-            billing_data.append(tuple([team,float(amount)]))
+            billing_data.append(tuple([team.pk_id,float(amount)]))
 
         return billing_data

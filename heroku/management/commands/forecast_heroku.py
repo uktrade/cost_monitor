@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from  heroku.collector import Collector
+from heroku.forecast import Forecast
 import traceback
 
 
@@ -7,8 +7,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            Collector().run()
-            self.stdout.write(self.style.SUCCESS("Heroku: OK"))
+            Forecast()
+            self.stdout.write(self.style.SUCCESS("HEROKU: OK"))
         except Exception as e:
             print("Report Error:{}".format(e))
             traceback.print_exc()

@@ -25,5 +25,5 @@
 
 ### Command
 ```bash
-$python manage.py run_reports
+$python manage.py run_report
 ```

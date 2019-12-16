@@ -20,3 +20,9 @@ class GDSCost(models.Model):
     space_id = models.ForeignKey(
         'GDSOrganizationsSpace', on_delete=models.CASCADE)
     amount = models.FloatField()
+
+class GDSForecast(models.Model):
+    pk_id = models.AutoField(primary_key=True)
+    cost_id = models.ForeignKey('GDSCost',on_delete=models.CASCADE)
+    amount = models.FloatField()
+    difference = models.FloatField()

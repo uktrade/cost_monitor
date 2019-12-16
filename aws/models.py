@@ -14,6 +14,6 @@ class AwsAccountCost(models.Model):
 
 class AwsForecast(models.Model):
     id = models.AutoField(primary_key=True)
-    account= models.ForeignKey('AwsAccount',on_delete=models.CASCADE)
+    cost_id= models.ForeignKey('AwsAccountCost',on_delete=models.CASCADE)
     amount = models.FloatField()
     difference = models.FloatField()

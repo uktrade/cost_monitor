@@ -13,6 +13,11 @@ class AwsRecordManager:
         report_date = ReportDate.objects.filter(month=month)[0]
         return AwsAccountCost.objects.filter(report_date=report_date).all()
 
+    def getCostByMonthAndAccountID(self,month,account_id):
+        account = self.getLinkedAccountbyID(id=account_id)[0]
+        report_date = ReportDate.objects.filter(month=month)[0]
+        return AwsAccountCost.objects.filter(report_date=report_date,account=account)
+
     def updateLinkedAcounts(self,linked_accounts):
 
         linked_accounts_in_db = set(self.getLinkedAccounts().values_list())
@@ -35,5 +40,5 @@ class AwsRecordManager:
 
     def updateForecast(self,forecastData):
         for forecast in forecastData:
-            account = self.getLinkedAccountbyID(forecast['id'])[0]
-            AwsForecast.objects.update_or_create(account=account,amount=forecast['amount'],difference=forecast['difference'])
+            cost_id = self.getCostByMonthAndAccountID(month=0,account_id=forecast['id'])[0]
+            AwsForecast.objects.update_or_create(cost_id=cost_id,amount=forecast['amount'],difference=forecast['difference'])

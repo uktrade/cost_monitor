@@ -1,5 +1,5 @@
-from gds.models import GDSOrganization, GDSOrganizationsSpace, GDSCost
-
+from gds.models import GDSOrganization, GDSOrganizationsSpace, GDSCost, GDSForecast
+from report.models import ReportDate
 
 class GDSRecordManager:
 
@@ -25,6 +25,16 @@ class GDSRecordManager:
             organization_id=organization_id)[0]
         return self.getSpaces().filter(organization_id=orgnization_obj, id=space_id)
 
+    
+    def getCostByMonth(self,month):
+        report_date = ReportDate.objects.filter(month=month)[0]
+        return GDSCost.objects.filter(report_date=report_date).all()
+
+    
+    def getCostByMonthAndSpaceID(self,month,space_id):
+        report_date = ReportDate.objects.filter(month=month)[0]
+        space_obj = self.getSpaceById(space_id=space_id)[0]
+        return GDSCost.objects.filter(report_date=report_date,space_id=space_obj)
 
     def updateOrganizations(self, organizations):
         organizations_in_db = set(self.getOgranizations().values_list())
@@ -60,3 +70,8 @@ class GDSRecordManager:
     def updateCost(self, date, organization, space, amount):
         GDSCost.objects.update_or_create(
             report_date=date, organization_id=organization, space_id=space, amount=amount)
+
+    def updateForecast(self,forecastData):
+           for forecast in forecastData:
+            cost_id = self.getCostByMonthAndSpaceID(month=0,space_id=forecast['id'])[0]
+            GDSForecast.objects.update_or_create(cost_id=cost_id,amount=forecast['amount'],difference=forecast['difference'])

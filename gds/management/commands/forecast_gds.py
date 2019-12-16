@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from gds.collector import Collector
+from gds.forecast import Forecast
 import traceback
 
 
@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            Collector().run()
+            Forecast()
             self.stdout.write(self.style.SUCCESS("GDS: OK"))
         except Exception as e:
             print("Report Error:{}".format(e))
