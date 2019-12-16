@@ -22,7 +22,7 @@ class Client(object):
         team_data = self.__fetch(end_point='teams')
 
         for team in team_data:
-            teams.append(team['name'])
+            teams.append(tuple([team['id'],team['name']]))
 
         return teams
 
@@ -35,6 +35,6 @@ class Client(object):
                     amount = invoice['total'] / 100
                 else:
                     amount = 0.0
-            billing_data.append(tuple([team.pk_id,float(amount)]))
+            billing_data.append(tuple([team.id,float(amount)]))
 
         return billing_data

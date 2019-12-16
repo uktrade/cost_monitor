@@ -12,11 +12,12 @@ class Forecast:
         forecastData = []
     
         for bill in self.herokuManager.getCostByMonth(month=ReportMonths.CURRENT_MONTH.value):
-            currentMonthBill.update({bill.team.pk_id: bill.amount})
+            currentMonthBill.update({bill.team.id: bill.amount})
         
         for bill in self.herokuManager.getCostByMonth(month=ReportMonths.PREVIOUS_MONTH.value):
-            previousMonthsBill.update({bill.team.pk_id: bill.amount})
+            previousMonthsBill.update({bill.team.id: bill.amount})
 
 
         forecastData = ForecastAlgo(currentMonthBill=currentMonthBill,previousMonthBill=previousMonthsBill).forecastData
+    
         self.herokuManager.updateForecast(forecastData=forecastData)

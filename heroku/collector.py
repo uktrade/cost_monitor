@@ -21,6 +21,7 @@ class Collector:
 
         for date in report_dates:
             teams_in_db = self.herokuManager.getHerokuTeams()
+           
             monthly_bills = self.herokuClient.getBills(
                 teams=teams_in_db, start_date=date.start_date.strftime(self.dateformat))
             self.herokuManager.updateCost(

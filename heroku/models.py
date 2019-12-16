@@ -3,7 +3,7 @@ from report.models import ReportDate
 
 # Create your models here.
 class HerokuTeam(models.Model):
-    pk_id = models.AutoField(primary_key=True)
+    id = models.CharField(max_length=200,primary_key=True)
     name = models.CharField(max_length=100)
 
 class HerokuCost(models.Model):

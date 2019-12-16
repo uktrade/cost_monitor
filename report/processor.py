@@ -41,11 +41,12 @@ class Processor:
     
     def runCollectors(self):
         self.__awsCollector()
-        self.__herokuCollector()
         self.__gdsCollector()
-
+        self.__herokuCollector()
+       
     
     def runForecasters(self):
         awsForecast()
-        herokuForecast()
         gdsForecast()
+        herokuForecast()
+        
