@@ -25,6 +25,8 @@ class GDSRecordManager:
             organization_id=organization_id)[0]
         return self.getSpaces().filter(organization_id=orgnization_obj, id=space_id)
 
+    def getCost(self):
+        return GDSCost.objects.all()
     
     def getCostByMonth(self,month):
         report_date = ReportDate.objects.filter(month=month)[0]
@@ -35,6 +37,10 @@ class GDSRecordManager:
         report_date = ReportDate.objects.filter(month=month)[0]
         space_obj = self.getSpaceById(space_id=space_id)[0]
         return GDSCost.objects.filter(report_date=report_date,space_id=space_obj)
+
+    
+    def getForecast(self):
+        return GDSForecast.objects.all()
 
     def updateOrganizations(self, organizations):
         organizations_in_db = set(self.getOgranizations().values_list())

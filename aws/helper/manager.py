@@ -9,6 +9,9 @@ class AwsRecordManager:
     def getLinkedAccountbyID(self,id):
         return self.getLinkedAccounts().filter(id=id)
 
+    def getCost(self):
+        return AwsAccountCost.objects.all()
+
     def getCostByMonth(self,month):
         report_date = ReportDate.objects.filter(month=month)[0]
         return AwsAccountCost.objects.filter(report_date=report_date).all()
@@ -17,6 +20,9 @@ class AwsRecordManager:
         account = self.getLinkedAccountbyID(id=account_id)[0]
         report_date = ReportDate.objects.filter(month=month)[0]
         return AwsAccountCost.objects.filter(report_date=report_date,account=account)
+
+    def getForecast(self):
+        return AwsForecast.objects.all()
 
     def updateLinkedAcounts(self,linked_accounts):
 

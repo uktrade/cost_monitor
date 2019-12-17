@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
 from report.processor import Processor
+from report.helper.export.prometheus import Prometheus
+
 import traceback
 import time
 

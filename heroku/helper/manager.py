@@ -15,10 +15,16 @@ class HerokuRecordManager:
     def getHerokuTeamByID(self,team_id):
         return HerokuTeam.objects.filter(id=team_id)
 
+    def getCoast(self):
+        return HerokuCost.objects.all()
+
     def getCostByMonthAndTeamID(self,month,team_id):
         report_date = ReportDate.objects.filter(month=month)[0]
         team = self.getHerokuTeamByID(team_id=team_id)[0]
         return HerokuCost.objects.filter(report_date=report_date,team=team)
+
+    def getForecast(self):
+        return HerokuForecast.objects.all()
 
     def updateHerokuTeam(self, teams):
         teams_in_db = set(self.getHerokuTeams().values_list())
