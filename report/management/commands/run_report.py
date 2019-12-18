@@ -9,10 +9,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         start_time = time.perf_counter()
-
+        processor = Processor()
         try:
-            Processor().runCollectors()
-            Processor().runForecasters()
+            processor.runCollectors()
+            processor.runForecasters()
             self.stdout.write(self.style.SUCCESS("Report Execusion: OK"))
         except Exception as e:
             print("Report Error:{}".format(e))

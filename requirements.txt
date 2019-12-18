@@ -7,4 +7,5 @@ gunicorn==19.9.0
 geckoboard.py==1.0.0
 lxml==4.3.3
 requests==2.22.0
-django-prometheus = 1.1.0
+django-prometheus==1.1.0
+psycopg2-binary==2.8.2
