@@ -1,4 +1,5 @@
 import requests
+import re
 from requests.exceptions import HTTPError
 
 
@@ -103,3 +104,14 @@ class Client:
                 tuple([space_data['guid'], space_name, space_data['amount']]))
 
         return billing_data
+
+    def suggestSpaceTeam(self, spaces):
+        suggested_space_names = []
+
+        for space in spaces:
+            name = re.sub(
+                '-', '', re.sub('-dev|-staging|-uat|-apps|-demo|-qa|-devpopcorn|-training', '', space.name))
+
+            suggested_space_names.append(tuple([space.name, name]))
+
+        return suggested_space_names

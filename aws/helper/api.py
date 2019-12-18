@@ -22,7 +22,15 @@ class Client:
 
         return linked_accounts
 
-    def aws_account_bill(self,start_date, end_date):
+    def suggestTeamNames(self, linked_accounts):
+        suggested_team_names = []
+
+        for id, name in linked_accounts:
+            suggested_team_names.append(tuple([name, name.split('-')[0]]))
+
+        return suggested_team_names
+
+    def aws_account_bill(self, start_date, end_date):
         billing_response = {}
         billing_data = []
 
@@ -32,6 +40,6 @@ class Client:
         for bill in billing_response:
             account_id = bill['Keys'][0]
             amount = float(bill['Metrics']['UnblendedCost']['Amount'])
-            billing_data.append(tuple([account_id,amount]))
+            billing_data.append(tuple([account_id, amount]))
 
         return billing_data

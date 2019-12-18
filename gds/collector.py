@@ -10,10 +10,10 @@ class Collector:
 
         self.gdsManager = GDSRecordManager()
         self.gdsClient = Client(gds_api_url=settings.GDS_PAAS_API_URL, gds_billing_url=settings.GDS_BILLING_API_URL,
-                                 login_name=settings.GDS_USER, password=settings.GDS_USER_PASS)
+                                login_name=settings.GDS_USER, password=settings.GDS_USER_PASS)
         self.dateformat = '%Y-%m-%d'
 
-    def run(self,report_dates):
+    def run(self, report_dates):
 
         self.gdsClient.setAccessToken()
         self.gdsManager.updateOrganizations(
@@ -22,7 +22,7 @@ class Collector:
         for date in report_dates:
             start_date = date.start_date.strftime(self.dateformat)
             end_date = date.end_date.strftime(self.dateformat)
-            
+
             for organization in self.gdsManager.getOgranizations():
                 organization_bill = self.gdsClient.getOrganizationBills(
                     organization_id=organization.id, start_date=start_date, end_date=end_date)
@@ -44,3 +44,8 @@ class Collector:
 
                     self.gdsManager.updateCost(
                         date=date, organization=organization, space=space, amount=amount)
+
+        suggested_team_names = self.gdsClient.suggestSpaceTeam(
+            spaces=self.gdsManager.getSpaces())
+        self.gdsManager.updateTeamSpaceAssociation(
+            suggested_team_names=suggested_team_names)

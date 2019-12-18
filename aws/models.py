@@ -1,5 +1,4 @@
 from django.db import models
-from django_prometheus.models import ExportModelOperationsMixin
 
 # Create your models here.
 
@@ -7,6 +6,13 @@ from django_prometheus.models import ExportModelOperationsMixin
 class AwsAccount(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=100)
+
+
+class AwsTeamAccountAssociation(models.Model):
+    pk_id = models.AutoField(primary_key=True)
+    account = models.ForeignKey("AwsAccount", on_delete=models.CASCADE)
+    account_name = models.CharField(max_length=100)
+    team = models.CharField(max_length=100)
 
 
 class AwsAccountCost(models.Model):

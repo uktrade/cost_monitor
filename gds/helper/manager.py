@@ -1,5 +1,6 @@
-from gds.models import GDSOrganization, GDSOrganizationsSpace, GDSCost, GDSForecast
+from gds.models import GDSOrganization, GDSOrganizationsSpace, GDSCost, GDSForecast, GDSTeamSpaceAssociation
 from report.models import ReportDate
+
 
 class GDSRecordManager:
 
@@ -15,6 +16,12 @@ class GDSRecordManager:
     def getSpaceById(self, space_id):
         return self.getSpaces().filter(id=space_id)
 
+    def getSpaceByName(self, name):
+        return self.getSpaces().filter(name=name)
+
+    def getAssociatedTeamNameBySpaceName(self, space_name):
+        return GDSTeamSpaceAssociation.objects.filter(space_name=space_name)
+
     def getOrganizationSpaces(self, organization_id):
         orgnization_obj = self.getOrganizationById(
             organization_id=organization_id)[0]
@@ -27,18 +34,16 @@ class GDSRecordManager:
 
     def getCost(self):
         return GDSCost.objects.all()
-    
-    def getCostByMonth(self,month):
+
+    def getCostByMonth(self, month):
         report_date = ReportDate.objects.filter(month=month)[0]
         return GDSCost.objects.filter(report_date=report_date).all()
 
-    
-    def getCostByMonthAndSpaceID(self,month,space_id):
+    def getCostByMonthAndSpaceID(self, month, space_id):
         report_date = ReportDate.objects.filter(month=month)[0]
         space_obj = self.getSpaceById(space_id=space_id)[0]
-        return GDSCost.objects.filter(report_date=report_date,space_id=space_obj)
+        return GDSCost.objects.filter(report_date=report_date, space_id=space_obj)
 
-    
     def getForecast(self):
         return GDSForecast.objects.all()
 
@@ -77,7 +82,21 @@ class GDSRecordManager:
         GDSCost.objects.update_or_create(
             report_date=date, organization_id=organization, space_id=space, amount=amount)
 
-    def updateForecast(self,forecastData):
-           for forecast in forecastData:
-            cost_id = self.getCostByMonthAndSpaceID(month=0,space_id=forecast['id'])[0]
-            GDSForecast.objects.update_or_create(cost_id=cost_id,amount=forecast['amount'],difference=forecast['difference'])
+    def updateTeamSpaceAssociation(self, suggested_team_names):
+        for space_name, team_name in suggested_team_names:
+            if not self.isSpaceInTeamAssociation(space_name=space_name):
+                space = self.getSpaceByName(name=space_name)[0]
+                GDSTeamSpaceAssociation.objects.create(
+                    space=space, space_name=space_name, team=team_name)
+
+    def updateForecast(self, forecastData):
+        for forecast in forecastData:
+            cost_id = self.getCostByMonthAndSpaceID(
+                month=0, space_id=forecast['id'])[0]
+            GDSForecast.objects.update_or_create(
+                cost_id=cost_id, amount=forecast['amount'], difference=forecast['difference'])
+
+    def isSpaceInTeamAssociation(self, space_name):
+        if GDSTeamSpaceAssociation.objects.filter(space_name=space_name):
+            return True
+        return False
