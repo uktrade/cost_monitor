@@ -5,12 +5,14 @@ from report.helper.export.prometheus import Prometheus
 import traceback
 import time
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
         start_time = time.perf_counter()
         processor = Processor()
         try:
+            processor.setReportDates()
             processor.runCollectors()
             processor.runForecasters()
             self.stdout.write(self.style.SUCCESS("Report Execusion: OK"))
