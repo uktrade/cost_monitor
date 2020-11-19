@@ -1,17 +1,22 @@
 from report.helper.reportDates import ReportDates
 from report.helper.reportMonths import ReportMonths
 from report.helper.manager import ReportManager
+from report.helper.gecko import cleint as gecko_client
 
 from aws.collector import Collector as awsCollector
-from heroku.collector import Collector as herokuCollector
 from gds.collector import Collector as GDSCollector
 
 
 from aws.forecast import Forecast as awsForecast
-from heroku.forecast import Forecast as herokuForecast
 from gds.forecast import Forecast as gdsForecast
 
+from prometheus_client import Gauge,CollectorRegistry
+from aws.helper.manager import AwsRecordManager
+from gds.helper.manager import GDSRecordManager
 
+from operator import itemgetter
+import requests
+from django.conf import settings
 class Processor:
 
     def __init__(self):
@@ -35,10 +40,6 @@ class Processor:
         awsCollector().run(report_dates=report_dates, linked_accounts_start_date=linked_accounts_start_date,
                            linked_accounts_end_date=linked_accounts_end_date)
 
-    def __herokuCollector(self):
-        report_dates = self.reportManager.reportDates()
-        herokuCollector().run(report_dates=report_dates)
-
     def __gdsCollector(self):
         report_dates = self.reportManager.reportDates()
         GDSCollector().run(report_dates=report_dates)
@@ -46,9 +47,38 @@ class Processor:
     def runCollectors(self):
         self.__awsCollector()
         self.__gdsCollector()
-        self.__herokuCollector()
 
     def runForecasters(self):
         awsForecast()
         gdsForecast()
-        herokuForecast()
+
+
+    def exportMetrics(self):
+        webClient = requests.session()
+        from config.urls import urlpatterns
+        requests.get(f'http://localhost:{settings.PORT}/export/forecast')        
+
+    def exportAwsForecastToGeckoboard(self,widget_uuid):
+        forecast_data = list()
+        costData = AwsRecordManager().getForecast()
+
+        for cost in costData:
+            forecast_data.append({'name': cost.cost_id.account.name, 'forecast': float(
+                    format(cost.amount, '.2f')), 'percent_diff': float(format(cost.difference, '.2f'))})
+
+        payload = gecko_client().leaderboard_format(data=sorted(forecast_data, key=itemgetter('forecast'), reverse=True))
+
+        gecko_client().push(widget_uuid=widget_uuid,payload=payload)
+
+
+    def exportGDSForecastToGeckoboard(self,widget_uuid):
+        forecast_data = list()
+        costData = GDSRecordManager().getForecast()
+
+        for cost in costData:
+            forecast_data.append({'name': f'{cost.cost_id.organization_id.name}/{cost.cost_id.space_id.name}', 'forecast': float(
+                    format(cost.amount, '.2f')), 'percent_diff': float(format(cost.difference, '.2f'))})
+
+        payload = gecko_client().leaderboard_format(data=sorted(forecast_data, key=itemgetter('forecast'), reverse=True))
+
+        gecko_client().push(widget_uuid=widget_uuid,payload=payload)

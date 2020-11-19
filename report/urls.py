@@ -1,8 +1,6 @@
 from django.urls import path
-
-from report.views import PrometheusView,PrometheusForecastView
+from report.views import PrometheusForecastView
 
 urlpatterns = [
-   path('costMetric/',PrometheusView.as_view(),name='prometheus_cost'),
-   path('forecastMetric/',PrometheusForecastView.as_view(),name='prometheus_forecast')
+   path('forecast/',PrometheusForecastView.as_view(),name='prometheus_forecast') #if you update this, please do update url in report/processor.py function expoertMetric()
 ]

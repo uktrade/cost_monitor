@@ -39,6 +39,7 @@ GDS_BILLING_API_URL = env('GDS_BILLING_API_URL')
 GDS_USER = env('GDS_USER')
 GDS_USER_PASS = env('GDS_USER_PASS')
 GECKO_TOKEN = env('GECKO_TOKEN')
+PORT = env('PORT')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -56,11 +57,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_prometheus',
     'report',
     'aws',
-    'heroku',
-    'gds',
-    'django_prometheus',
+    'gds'
 ]
 
 MIDDLEWARE = [
@@ -72,7 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',    
 ]
 
 ROOT_URLCONF = 'config.urls'

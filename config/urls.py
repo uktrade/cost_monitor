@@ -18,6 +18,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('prometheus/',include('report.urls')),
-    path('', include('django_prometheus.urls')),
+    path('export/',include('report.urls')), #if you update this, please do update url in report/processor.py function expoertMetric()
+    path('', include('django_prometheus.urls'))
 ]
