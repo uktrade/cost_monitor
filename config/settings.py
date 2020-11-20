@@ -30,8 +30,6 @@ env = environ.Env(
 
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
-HEROKU_API_KEY = env('HEROKU_API_KEY')
-HEROKU_SITE = env('HEROKU_SITE')
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 GDS_PAAS_API_URL = env('GDS_PAAS_API_URL')
@@ -40,6 +38,7 @@ GDS_USER = env('GDS_USER')
 GDS_USER_PASS = env('GDS_USER_PASS')
 GECKO_TOKEN = env('GECKO_TOKEN')
 PORT = env('PORT')
+COST_EXPORTER_URL = env('COST_EXPORTER_URL')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/

@@ -17,6 +17,7 @@ from gds.helper.manager import GDSRecordManager
 from operator import itemgetter
 import requests
 from django.conf import settings
+import re
 class Processor:
 
     def __init__(self):
@@ -55,8 +56,9 @@ class Processor:
 
     def exportMetrics(self):
         webClient = requests.session()
-        from config.urls import urlpatterns
-        requests.get(f'http://localhost:{settings.PORT}/export/forecast')        
+        url_parts = (settings.COST_EXPORTER_URL).split('/')
+        url_parts[2] = f'{url_parts[2]}:{settings.PORT}'
+        requests.get('/'.join(url_parts))        
 
     def exportAwsForecastToGeckoboard(self,widget_uuid):
         forecast_data = list()
