@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('export/',include('report.urls')), #if you update this, please do update env COST_EXPORTER_URL
+    path('', include('django_prometheus.urls'))
 ]

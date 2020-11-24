@@ -1,8 +1,9 @@
 import requests
+import re
 from requests.exceptions import HTTPError
 
 
-class client:
+class Client:
 
     def __init__(self, gds_api_url=None, gds_billing_url=None, login_name=None, password=None):
         self.gds_api_url = gds_api_url
@@ -24,12 +25,12 @@ class client:
         headers.update(self.userAgent)
         return requests.post(uri, headers=headers, data=data)
 
-    def getLoginLink(self):
+    def __getLoginLink(self):
         apiInfo = self.__getRequest(f"{self.gds_api_url}/info")
         return apiInfo.json()['authorization_endpoint'] + '/oauth/token'
 
     def setAccessToken(self):
-        loginLink = self.getLoginLink()
+        loginLink = self.__getLoginLink()
 
         auth_headers = {
             "accept": "application/json;",
@@ -44,28 +45,30 @@ class client:
 
         self.access_token = response.json()['access_token']
 
-    def getOrgs(self):
-        organizations = []
+    def getOrganizations(self):
+        organizations_list = []
         headers = {
             'Accept': 'application/json',
             'Authorization': "Bearer {}".format(self.access_token)
         }
-        orgsLink = self.gds_api_url + '/v3/organizations'
+        organizations = f'{self.gds_api_url}/v3/organizations'
 
         while True:
-            orgInfo = self.__getRequest(uri=orgsLink, headers=headers).json()
-            for org in orgInfo['resources']:
-                organizations.append(
-                    {'name': org['name'], 'guid': org['guid']})
+            organizationsInfo = self.__getRequest(
+                uri=organizations, headers=headers).json()
 
-            if orgInfo['pagination']['next'] is None:
+            for organization in organizationsInfo['resources']:
+                organizations_list.append(
+                    tuple([organization['guid'], organization['name']]))
+
+            if organizationsInfo['pagination']['next'] is None:
                 break
-            orgsLink = orgInfo['pagination']['next']
+            organizations = organizationsInfo['pagination']['next']
 
-        return organizations
+        return organizations_list
 
-    def get_bill(self, start_date=None, end_date=None):
-        billing_data = {}
+    def getOrganizationBills(self, organization_id, start_date, end_date):
+        billing_data = []
         headers = {
             'Accept': 'application/json',
             'Authorization': "Bearer {}".format(self.access_token)
@@ -76,22 +79,39 @@ class client:
             'range_stop': end_date
         }
 
-        for org in self.getOrgs():
-            query['org_guid'] = org['guid']
-            billingInfo = self.__getRequest(
-                self.gds_billing_url, headers=headers, query=query).json()
-            space_bill = {}
-            for bill in billingInfo:
-                space_name = bill['space_name']
-                if space_name not in space_bill:
-                    space_bill[space_name] = 0
-                else:
-                    space_bill[space_name] += float(bill['price']['inc_vat'])
-            org_total = 0
-            for space_name, bill in space_bill.items():
-                org_total += bill
-                billing_data["{}/{}".format(org['name'], space_name)] = bill
+        query.update({'org_guid': organization_id})
 
-            billing_data["{}/ALl SPACES".format(org['name'])] = org_total
+        billingInfo = self.__getRequest(
+            uri=self.gds_billing_url, headers=headers, query=query).json()
+
+        space_bill = {}
+        for bill in billingInfo:
+            space_name = bill['space_name']
+            space_id = bill['space_guid']
+
+            if space_name not in space_bill:
+                space_bill.update(
+                    {space_name: {'guid': space_id, 'amount': 0}})
+
+            amount = space_bill[space_name]['amount'] + \
+                float(bill['price']['inc_vat'])
+
+            space_bill.update(
+                {space_name: {'guid': space_id, 'amount': amount}})
+
+        for space_name, space_data in space_bill.items():
+            billing_data.append(
+                tuple([space_data['guid'], space_name, space_data['amount']]))
 
         return billing_data
+
+    def suggestSpaceTeam(self, spaces):
+        suggested_space_names = []
+
+        for space in spaces:
+            name = re.sub(
+                '-', '', re.sub('-dev|-staging|-uat|-apps|-demo|-qa|-devpopcorn|-training', '', space.name))
+
+            suggested_space_names.append(tuple([space.name, name]))
+
+        return suggested_space_names

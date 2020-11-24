@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import environ
+import dj_database_url
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,8 +30,6 @@ env = environ.Env(
 
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
-HEROKU_API_KEY = env('HEROKU_API_KEY')
-HEROKU_SITE = env('HEROKU_SITE')
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 GDS_PAAS_API_URL = env('GDS_PAAS_API_URL')
@@ -37,12 +37,14 @@ GDS_BILLING_API_URL = env('GDS_BILLING_API_URL')
 GDS_USER = env('GDS_USER')
 GDS_USER_PASS = env('GDS_USER_PASS')
 GECKO_TOKEN = env('GECKO_TOKEN')
+PORT = env('PORT')
+COST_EXPORTER_URL = env('COST_EXPORTER_URL')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
 # Application definition
@@ -54,13 +56,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
+    'django_prometheus',
+    'report',
     'aws',
-    'heroku',
-    'gds',
+    'gds'
 ]
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -68,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',    
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -94,11 +98,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+if 'VCAP_SERVICES' in os.environ:
+    services = json.loads(os.getenv('VCAP_SERVICES'))
+    DATABASE_URL = services['postgres'][0]['credentials']['uri']
+else:
+    DATABASE_URL = os.getenv('DATABASE_URL')
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
-    }
+    'default': dj_database_url.config()
 }
 
 

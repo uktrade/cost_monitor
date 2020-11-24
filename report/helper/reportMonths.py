@@ -1,0 +1,10 @@
+from enum import Enum
+
+class ReportMonths(Enum):
+    CURRENT_MONTH = 0
+    PREVIOUS_MONTH = 1
+    CURRENT_MONTH_MINUS_2 = 2
+    CURRENT_MONTH_MINUS_3 = 3
+    CURRENT_MONTH_MINUS_4 = 4
+    CURRENT_MONTH_MINUS_5 = 5
+    CURRENT_MONTH_MINUS_6 = 6
