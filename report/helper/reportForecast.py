@@ -9,7 +9,7 @@ class Forecast:
         self.report_dates = ReportDates()
         self.forecastData = []
 
-        if algo is 'basic':
+        if algo == 'basic':
             self.forecastData = self.__basic(
                 currentMonthBill=currentMonthBill, previousMonthsBill=previousMonthBill)
 
