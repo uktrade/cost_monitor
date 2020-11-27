@@ -1,21 +1,25 @@
 from prometheus_client import Gauge,CollectorRegistry
 from aws.helper.manager import AwsRecordManager
 from gds.helper.manager import GDSRecordManager
+ 
+from prometheus_client import CollectorRegistry, Gauge
+import os
 class PrometheusForecast:
 
-    def __init__(self):
+    def __init__(self):    
         self.registry = CollectorRegistry()
         self.awsForecastMetric = Gauge('aws_cost_forecast', 'AWSCostForecast for Dit', [
-                                       'startDate', 'account', 'team'])
+                                       'startDate', 'account', 'team'],registry=self.registry)
         self.gdsForecastMetric = Gauge('gds_cost_forecast', 'GDSCostForecast for Dit', [
-                                       'startDate', 'organization', 'space', 'team'])
+                                       'startDate', 'organization', 'space', 'team'],registry=self.registry)
+        self.awsExpectedChangeMetric = Gauge('aws_estimated_change_forecast', 'An estimate of (signed) Diffrence in Bill from Previous Month', [
+                                       'startDate', 'account', 'team'],registry=self.registry)
+        self.gdsExpectedChangetMetric = Gauge('gds_estimated_change_forecast', 'An estimate of (signed) Diffrence in Bill from Previous Month', [
+                                       'startDate', 'organization', 'space', 'team'],registry=self.registry)
 
-        self.awsExpectedChangeMetric = Gauge('aws_estimated__change_forecast', 'An estimate of (signed) Diffrence in Bill from Previous Month', [
-                                       'startDate', 'account', 'team'])
-        self.gdsExpectedChangetMetric = Gauge('gds__estimated__change_forecast', 'An estimate of (signed) Diffrence in Bill from Previous Month', [
-                                       'startDate', 'organization', 'space', 'team'])
-
-
+    def getRegistry(self):
+        return self.registry
+    
     def exportAwsForecast(self):
 
         costData = AwsRecordManager().getForecast()
@@ -26,7 +30,6 @@ class PrometheusForecast:
                 account_name=account)[0].team
             self.awsForecastMetric.labels(startDate,account,team).set(cost.amount)
             self.awsExpectedChangeMetric.labels(startDate,account,team).set(cost.difference)
-        
 
 
     def exportGDSForecast(self):
