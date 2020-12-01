@@ -9,13 +9,13 @@ class PrometheusForecast:
     def __init__(self):    
         self.registry = CollectorRegistry()
         self.awsForecastMetric = Gauge('aws_cost_forecast', 'AWSCostForecast for Dit', [
-                                       'startDate', 'account', 'team'],registry=self.registry)
+                                        'account', 'team'],registry=self.registry)
         self.gdsForecastMetric = Gauge('gds_cost_forecast', 'GDSCostForecast for Dit', [
-                                       'startDate', 'organization', 'space', 'team'],registry=self.registry)
+                                        'organization', 'space', 'team'],registry=self.registry)
         self.awsExpectedChangeMetric = Gauge('aws_estimated_change_forecast', 'An estimate of (signed) Diffrence in Bill from Previous Month', [
-                                       'startDate', 'account', 'team'],registry=self.registry)
+                                        'account', 'team'],registry=self.registry)
         self.gdsExpectedChangetMetric = Gauge('gds_estimated_change_forecast', 'An estimate of (signed) Diffrence in Bill from Previous Month', [
-                                       'startDate', 'organization', 'space', 'team'],registry=self.registry)
+                                        'organization', 'space', 'team'],registry=self.registry)
 
     def getRegistry(self):
         return self.registry
@@ -28,8 +28,8 @@ class PrometheusForecast:
             account = cost.cost_id.account.name
             team = AwsRecordManager().getAssociatedTeamByAccountName(
                 account_name=account)[0].team
-            self.awsForecastMetric.labels(startDate,account,team).set(cost.amount)
-            self.awsExpectedChangeMetric.labels(startDate,account,team).set(cost.difference)
+            self.awsForecastMetric.labels(account,team).set(cost.amount)
+            self.awsExpectedChangeMetric.labels(account,team).set(cost.difference)
 
 
     def exportGDSForecast(self):
@@ -42,6 +42,6 @@ class PrometheusForecast:
             team = GDSRecordManager().getAssociatedTeamNameBySpaceName(
                 space_name=space)[0].team
             self.gdsForecastMetric.labels(
-                startDate, organization, space, team).set(cost.amount)
+                 organization, space, team).set(cost.amount)
             self.gdsExpectedChangetMetric.labels(
-                startDate, organization, space, team).set(cost.difference)
+                organization, space, team).set(cost.difference)
