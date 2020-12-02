@@ -37,7 +37,6 @@ GDS_BILLING_API_URL = env('GDS_BILLING_API_URL')
 GDS_USER = env('GDS_USER')
 GDS_USER_PASS = env('GDS_USER_PASS')
 GECKO_TOKEN = env('GECKO_TOKEN')
-PORT = env('PORT')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
