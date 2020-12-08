@@ -63,8 +63,13 @@ class AwsRecordManager:
         for forecast in forecastData:
             cost_id = self.getCostByMonthAndAccountID(
                 month=0, account_id=forecast['id'])[0]
-            AwsForecast.objects.update_or_create(
-                cost_id=cost_id, amount=forecast['amount'], difference=forecast['difference'])
+            cost_id_exist = AwsForecast.objects.filter(cost_id=cost_id)
+
+            if cost_id_exist:
+                cost_id_exist.update(amount=forecast['amount'], difference=forecast['difference'])
+    
+            else:
+                AwsForecast.objects.create(cost_id=cost_id, amount=forecast['amount'], difference=forecast['difference'])
 
     def isAccountInTeamAssociation(self, account_name):
         if AwsTeamAccountAssociation.objects.filter(account_name=account_name):

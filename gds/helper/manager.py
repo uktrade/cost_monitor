@@ -93,8 +93,14 @@ class GDSRecordManager:
         for forecast in forecastData:
             cost_id = self.getCostByMonthAndSpaceID(
                 month=0, space_id=forecast['id'])[0]
-            GDSForecast.objects.update_or_create(
-                cost_id=cost_id, amount=forecast['amount'], difference=forecast['difference'])
+
+            cost_id_exist = GDSForecast.objects.filter(cost_id=cost_id)
+
+            if cost_id_exist:
+                cost_id_exist.update(amount=forecast['amount'], difference=forecast['difference'])
+            
+            else:
+                GDSForecast.objects.create(cost_id=cost_id, amount=forecast['amount'], difference=forecast['difference'])
 
     def isSpaceInTeamAssociation(self, space_name):
         if GDSTeamSpaceAssociation.objects.filter(space_name=space_name):
