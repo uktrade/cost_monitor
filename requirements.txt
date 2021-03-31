@@ -1,10 +1,13 @@
-django==2.2.16
-django-environ
-dj-database-url
+django >= 3.1.7
+django-environ == 0.4.5
+dj-database-url == 0.5.0
+geckoboard.py == 1.0.0
+gunicorn == 20.0.4
+psycopg2-binary == 2.8.2
+notifications-python-client == 6.0.2
+whitenoise == 4.1.4
 awscli
 boto3
-gunicorn
-geckoboard.py
 lxml
 requests
 prometheus_client
