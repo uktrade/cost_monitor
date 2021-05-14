@@ -11,4 +11,3 @@ boto3
 lxml
 requests
 prometheus_client
-psycopg2-binary
