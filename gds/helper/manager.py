@@ -58,8 +58,12 @@ class GDSRecordManager:
             GDSOrganization.objects.filter(id=organization_id).delete()
 
         for organization_id, organization_name in add_organization:
-            GDSOrganization.objects.create(
-                id=organization_id, name=organization_name)
+            #if organization was renamed, simply update the name
+            if self.getOgranizations().filter(id=organization_id):
+                self.getOgranizations().filter(id=organization_id).update(name=organization_name)
+            else:
+                GDSOrganization.objects.create(
+                    id=organization_id, name=organization_name)
 
     def updateOrganizationSpaces(self, organization, spaces):
 
@@ -75,8 +79,12 @@ class GDSRecordManager:
             GDSOrganizationsSpace.objects.filter(id=space_id).delete()
 
         for space_id, space_name in add_spaces:
-            GDSOrganizationsSpace.objects.create(
-                organization_id=organization, id=space_id, name=space_name)
+            #if space was renamed, simply update hte name
+            if (self.getOrganizationSpaces(organization_id=organization.id).filter(id=space_id)):
+                self.getOrganizationSpaces(organization_id=organization.id).update(name=space_name)
+            else:
+                GDSOrganizationsSpace.objects.create(
+                    organization_id=organization, id=space_id, name=space_name)
 
     def updateCost(self, date, organization, space, amount):
         GDSCost.objects.update_or_create(
