@@ -43,7 +43,11 @@ class AwsRecordManager:
             AwsAccount.objects.filter(id=id).delete()
 
         for id, name in add_accounts:
-            AwsAccount.objects.create(id=id, name=name)
+            #if account is renamed, just update the name
+            if self.getLinkedAccounts().filter(id=id):
+                AwsAccount.objects.filter(id=id).update(name=name)
+            else:
+                AwsAccount.objects.create(id=id, name=name)
 
     def updateAccountTeamAssociation(self, suggested_team_names):
         for account_name, team_name in suggested_team_names:
