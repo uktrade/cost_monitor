@@ -1,21 +1,21 @@
-from prometheus_client import Gauge,CollectorRegistry
-from aws.helper.manager import AwsRecordManager
-from gds.helper.manager import GDSRecordManager
- 
-from prometheus_client import CollectorRegistry, Gauge
+import datetime as dt
 import os
+
+from prometheus_client import CollectorRegistry, Gauge
+
+from aws.helper.manager import AwsRecordManager
+from govpaas.models import BillingData, lookup_team_name
+
+
 class PrometheusForecast:
 
-    def __init__(self):    
-        self.registry = CollectorRegistry()
+    def __init__(self, registry):
+        self.registry = registry
         self.awsForecastMetric = Gauge('aws_cost_forecast', 'AWSCostForecast for Dit', [
-                                        'account', 'team'],registry=self.registry)
+                                        'account', 'team'], registry=self.registry)
         self.gdsForecastMetric = Gauge('gds_cost_forecast', 'GDSCostForecast for Dit', [
-                                        'organization', 'space', 'team'],registry=self.registry)
-       
-    def getRegistry(self):
-        return self.registry
-    
+                                        'organization', 'space', 'team'], registry=self.registry)
+
     def exportAwsForecast(self):
 
         costData = AwsRecordManager().getForecast()
@@ -26,15 +26,11 @@ class PrometheusForecast:
                 account_name=account)[0].team
             self.awsForecastMetric.labels(account,team).set(cost.amount)
 
-
     def exportGDSForecast(self):
-    
-        costData = GDSRecordManager().getForecast()
-        for cost in costData:
-            startDate = cost.cost_id.report_date.start_date
-            organization = cost.cost_id.organization_id.name
-            space = cost.cost_id.space_id.name
-            team = GDSRecordManager().getAssociatedTeamNameBySpaceName(
-                space_name=space)[0].team
-            self.gdsForecastMetric.labels(
-                 organization, space, team).set(cost.amount)
+        today = dt.date.today()
+
+        billing_data = BillingData.objects.exclude(space="").filter(year=today.year, month=today.month)
+
+        for item in billing_data:
+            team = lookup_team_name(item.space)
+            self.gdsForecastMetric.labels(item.org, item.space, team).set(item.amount)
