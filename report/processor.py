@@ -46,11 +46,11 @@ class Processor:
 
     def runCollectors(self):
         self.__awsCollector()
-        self.__gdsCollector()
+        # self.__gdsCollector()
 
     def runForecasters(self):
         awsForecast()
-        gdsForecast()
+        # gdsForecast()
 
     def exportAwsForecastToGeckoboard(self,widget_uuid):
         forecast_data = list()
@@ -65,14 +65,14 @@ class Processor:
         gecko_client().push(widget_uuid=widget_uuid,payload=payload)
 
 
-    def exportGDSForecastToGeckoboard(self,widget_uuid):
-        forecast_data = list()
-        costData = GDSRecordManager().getForecast()
-
-        for cost in costData:
-            forecast_data.append({'name': f'{cost.cost_id.organization_id.name}/{cost.cost_id.space_id.name}', 'forecast': float(
-                    format(cost.amount, '.2f')), 'percent_diff': float(format(cost.difference, '.2f'))})
-
-        payload = gecko_client().leaderboard_format(data=sorted(forecast_data, key=itemgetter('forecast'), reverse=True))
-
-        gecko_client().push(widget_uuid=widget_uuid,payload=payload)
+    # def exportGDSForecastToGeckoboard(self,widget_uuid):
+    #     forecast_data = list()
+    #     costData = GDSRecordManager().getForecast()
+    #
+    #     for cost in costData:
+    #         forecast_data.append({'name': f'{cost.cost_id.organization_id.name}/{cost.cost_id.space_id.name}', 'forecast': float(
+    #                 format(cost.amount, '.2f')), 'percent_diff': float(format(cost.difference, '.2f'))})
+    #
+    #     payload = gecko_client().leaderboard_format(data=sorted(forecast_data, key=itemgetter('forecast'), reverse=True))
+    #
+    #     gecko_client().push(widget_uuid=widget_uuid,payload=payload)
