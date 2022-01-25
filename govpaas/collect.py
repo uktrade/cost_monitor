@@ -86,12 +86,12 @@ def import_billing_data():
             }
 
             for space, amount in prev_month_data.items():
-                BillingData.objects.create(
+                BillingData.objects.update_or_create(
                     space=space,
                     defaults={
                         "amount": amount,
                         "complete": True,
-                    }
+                    },
                     **default_fields,
                 )
 
@@ -101,7 +101,7 @@ def import_billing_data():
                 defaults={
                     "amount": sum(prev_month_data.values()),
                     "complete": True,
-                }
+                },
                 **default_fields,
             )
 
