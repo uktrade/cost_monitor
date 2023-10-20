@@ -1,0 +1,6 @@
+---
+applications:
+  - name: cost_monitor
+    buildpacks:
+      - python_buildpack
+    stack: cflinuxfs4

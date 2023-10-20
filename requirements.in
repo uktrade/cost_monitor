@@ -1,0 +1,13 @@
+django
+django-environ 
+dj-database-url 
+geckoboard.py 
+gunicorn
+psycopg2-binary
+notifications-python-client 
+whitenoise 
+awscli
+boto3
+lxml
+requests
+prometheus_client
