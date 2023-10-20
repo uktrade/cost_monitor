@@ -21,19 +21,21 @@ charset-normalizer==3.3.0
     # via requests
 colorama==0.4.4
     # via awscli
-dj-database-url==0.5.0
+dj-database-url==2.1.0
     # via -r requirements.in
 django==4.2.6
-    # via -r requirements.in
-django-environ==0.4.5
+    # via
+    #   -r requirements.in
+    #   dj-database-url
+django-environ==0.11.2
     # via -r requirements.in
 docopt==0.6.2
     # via notifications-python-client
 docutils==0.16
     # via awscli
-geckoboard-py==1.0.0
+geckoboard-py==1.1.0
     # via -r requirements.in
-gunicorn==20.0.4
+gunicorn==21.2.0
     # via -r requirements.in
 idna==3.4
     # via requests
@@ -43,8 +45,10 @@ jmespath==1.0.1
     #   botocore
 lxml==4.9.3
     # via -r requirements.in
-notifications-python-client==6.0.2
+notifications-python-client==8.1.0
     # via -r requirements.in
+packaging==23.2
+    # via gunicorn
 prometheus-client==0.17.1
     # via -r requirements.in
 psycopg2-binary==2.9.9
@@ -73,13 +77,12 @@ six==1.16.0
 sqlparse==0.4.4
     # via django
 typing-extensions==4.8.0
-    # via asgiref
+    # via
+    #   asgiref
+    #   dj-database-url
 urllib3==2.0.7
     # via
     #   botocore
     #   requests
-whitenoise==4.1.4
+whitenoise==6.6.0
     # via -r requirements.in
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
