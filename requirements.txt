@@ -8,9 +8,9 @@ asgiref==3.7.2
     # via django
 awscli==1.29.67
     # via -r requirements.in
-boto3
+boto3==1.28.67
     # via -r requirements.in
-botocore
+botocore==1.31.67
     # via
     #   awscli
     #   boto3
@@ -23,7 +23,7 @@ colorama==0.4.4
     # via awscli
 dj-database-url==2.1.0
     # via -r requirements.in
-django==4.2.6
+django==4.2.7
     # via
     #   -r requirements.in
     #   dj-database-url
@@ -80,9 +80,9 @@ typing-extensions==4.8.0
     # via
     #   asgiref
     #   dj-database-url
-urllib3
+urllib3==2.0.7
     # via
     #   botocore
     #   requests
-whitenoise
+whitenoise==6.6.0
     # via -r requirements.in
